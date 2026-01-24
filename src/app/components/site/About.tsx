@@ -38,9 +38,9 @@ export default function About() {
 
   const slides: Slide[] = useMemo(
     () => [
-      { src: '/about-01.jpg', alt: 'Bioprotece3D - Planta / Proceso' },
-      { src: '/about-02.jpg', alt: 'Bioprotece3D - Piezas metálicas' },
-      { src: '/about-03.jpg', alt: 'Bioprotece3D - Tecnología / Equipo' }
+      { src: '/about/01.webp', alt: 'Bioprotece3D - Planta / Proceso' },
+      { src: '/about/02.webp', alt: 'Bioprotece3D - Piezas metálicas' },
+      { src: '/about/03.webp', alt: 'Bioprotece3D - Tecnología / Equipo' }
     ],
     []
   );
@@ -245,10 +245,6 @@ export default function About() {
                   </div>
                 </div>
               </div>
-
-              <p className="mt-3 text-xs text-ink-muted text-center lg:text-left">
-                {t('slideshowHint')}
-              </p>
             </div>
           </div>
         </div>

@@ -179,10 +179,10 @@ export default function Services() {
 
   const sectors: Sector[] = useMemo(
     () => [
-      { title: t('sectors.0.title'), body: t('sectors.0.body'), imageSrc: '/oil-gas.jpg' },
-      { title: t('sectors.1.title'), body: t('sectors.1.body'), imageSrc: '/automotriz.jpg' },
-      { title: t('sectors.2.title'), body: t('sectors.2.body'), imageSrc: '/quimica.jpg' },
-      { title: t('sectors.3.title'), body: t('sectors.3.body'), imageSrc: '/aero.jpg' }
+      { title: t('sectors.0.title'), body: t('sectors.0.body'), imageSrc: '/services/oil-gas.jpg' },
+      { title: t('sectors.1.title'), body: t('sectors.1.body'), imageSrc: '/services/automotriz.png' },
+      { title: t('sectors.2.title'), body: t('sectors.2.body'), imageSrc: '/services/quimica.png' },
+      { title: t('sectors.3.title'), body: t('sectors.3.body'), imageSrc: '/services/aero.png' }
     ],
     [t]
   );
@@ -391,8 +391,8 @@ export default function Services() {
                       'transition-transform duration-300 hover:-translate-y-0.5'
                     )}
                   >
-                    <div className="relative h-40 w-full bg-black/5">
-                      <Image src={s.imageSrc} alt={s.title} fill className="object-cover" />
+                    <div className="relative h-60 w-full bg-black/5">
+                      <Image src={s.imageSrc} alt={s.title} fill className="object-cover object-top" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-transparent" />
                     </div>
 

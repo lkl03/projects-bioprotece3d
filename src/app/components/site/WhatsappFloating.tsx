@@ -32,7 +32,8 @@ export default function WhatsAppFloating() {
         'transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sky/60',
         // WhatsApp green (oficial aprox)
-        'bg-[#25D366] text-white'
+        'bg-[#25D366] text-white',
+        'mb-[14px] sm:mb-0'
       )}
       aria-label={t('aria')}
     >

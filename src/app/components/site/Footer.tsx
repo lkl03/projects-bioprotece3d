@@ -56,14 +56,14 @@ export default function Footer() {
       <div
         ref={enterRef}
         className={cn(
-          'border-t-4 border-brand-blue',
+          'border-t-10 border-brand-blue',
           entered
             ? 'opacity-100 motion-safe:animate-fade-in motion-safe:animate-duration-700'
             : 'opacity-0'
         )}
       >
         <div className="mx-auto w-full max-w-screen-2xl 3xl:max-w-[1760px] px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
+          <div className="flex flex-col gap-10 md:flex-row items-center md:items-start md:justify-between">
             {/* Left: Logo */}
             <div className="md:basis-1/3">
               <a href="#inicio" className="inline-flex items-center gap-3">
@@ -131,7 +131,7 @@ export default function Footer() {
             </div>
 
             {/* Right: Back to top */}
-            <div className="md:basis-1/3 md:flex md:justify-end">
+            <div className="md:basis-1/3 md:flex md:justify-end self-start md:self-auto">
               <div className="flex flex-col items-start md:items-end gap-3">
                 <Button
                   type="button"

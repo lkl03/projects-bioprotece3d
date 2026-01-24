@@ -121,7 +121,7 @@ export default function Contact() {
                   {t('formHint')}
                 </p>
 
-                <form className="mt-6 space-y-5">
+                <form className="mt-6 space-y-5 text-left">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <label className="space-y-2 text-left">
                       <span className="text-sm font-medium text-brand-navy">
@@ -192,7 +192,7 @@ export default function Contact() {
                   </div>
 
                   <label className="space-y-2 text-left">
-                    <span className="text-sm font-medium text-brand-navy">
+                    <span className="text-sm text-left! font-medium text-brand-navy">
                       {t('message')} <span className="text-brand-blue">*</span>
                     </span>
                     <textarea
