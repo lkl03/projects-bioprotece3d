@@ -21,9 +21,15 @@ export async function generateMetadata(
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'Metadata' });
 
+  const brandBlue = '#001862';
+
   return {
     title: t('title'),
-    description: t('description')
+    description: t('description'),
+    themeColor: [
+      { media: '(prefers-color-scheme: light)', color: brandBlue },
+      { media: '(prefers-color-scheme: dark)', color: brandBlue }
+    ]
   };
 }
 
@@ -50,4 +56,5 @@ export default async function LocaleLayout(
     </html>
   );
 }
+
 
