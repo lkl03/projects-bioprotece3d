@@ -71,7 +71,7 @@ export default function Contact() {
   const whatsappHref =
     'https://wa.me/5491133647947?text=Hola!%20Vengo%20de%20la%20web%20de%20Bioprotece.%20Estoy%20interesado%20en...';
 
-  const emailValue = 'info@bioprotece3d.com';
+  const emailValue = 'impresion3d@bioprotece.com';
   const emailHref = `mailto:${emailValue}`;
 
   const mapsSrc =
