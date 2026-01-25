@@ -38,6 +38,8 @@ function MailIcon({ className }: { className?: string }) {
   );
 }
 
+type SendState = 'idle' | 'loading' | 'success' | 'error';
+
 export default function Contact() {
   const t = useTranslations('Contact');
   const locale = useLocale() as Locale;
@@ -83,6 +85,87 @@ export default function Contact() {
     'focus:outline-none focus:ring-1 focus:ring-brand-sky/35 focus:border-brand-sky/35'
   );
 
+  const [sendState, setSendState] = useState<SendState>('idle');
+  const [sendMsg, setSendMsg] = useState<string>('');
+  const formRef = useRef<HTMLFormElement | null>(null);
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (sendState === 'loading') return;
+
+    setSendState('loading');
+    setSendMsg('');
+
+    const fd = new FormData(e.currentTarget);
+
+    const payload = {
+      name: String(fd.get('name') ?? '').trim(),
+      email: String(fd.get('email') ?? '').trim(),
+      whatsapp: String(fd.get('whatsapp') ?? '').trim(),
+      preferred: (String(fd.get('preferred') ?? 'email') === 'whatsapp' ? 'whatsapp' : 'email') as
+        | 'email'
+        | 'whatsapp',
+      message: String(fd.get('message') ?? '').trim(),
+      // honeypot (input oculto)
+      company: String(fd.get('company') ?? '').trim()
+    };
+
+    // validación mínima
+    if (!payload.name || !payload.email || !payload.message) {
+      setSendState('error');
+      setSendMsg(
+        (t as any).has?.('sendMissing')
+          ? t('sendMissing')
+          : locale === 'es'
+            ? 'Completá nombre, correo y mensaje.'
+            : 'Please fill name, email and message.'
+      );
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const json = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+
+      if (!res.ok || !json.ok) {
+        setSendState('error');
+        setSendMsg(
+          (t as any).has?.('sendError')
+            ? t('sendError')
+            : locale === 'es'
+              ? 'No pudimos enviar tu consulta. Probá de nuevo en unos minutos.'
+              : "We couldn't send your message. Please try again in a few minutes."
+        );
+        return;
+      }
+
+      setSendState('success');
+      setSendMsg(
+        (t as any).has?.('sendSuccess')
+          ? t('sendSuccess')
+          : locale === 'es'
+            ? '¡Listo! Recibimos tu consulta y te vamos a responder a la brevedad.'
+            : "Done! We received your message and we'll get back to you shortly."
+      );
+
+      formRef.current?.reset();
+    } catch {
+      setSendState('error');
+      setSendMsg(
+        (t as any).has?.('sendError')
+          ? t('sendError')
+          : locale === 'es'
+            ? 'No pudimos enviar tu consulta. Probá de nuevo en unos minutos.'
+            : "We couldn't send your message. Please try again in a few minutes."
+      );
+    }
+  }
+
   return (
     <section id={ids.contact} className="bg-surface-muted">
       <div
@@ -94,7 +177,7 @@ export default function Contact() {
         )}
       >
         <div className="mx-auto w-full max-w-screen-2xl 3xl:max-w-[1760px] px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
-          {/* Intro centrado */}
+          {/* Intro */}
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-xs uppercase tracking-[0.22em] text-brand-blue/80">
               {t('kicker')}
@@ -121,7 +204,17 @@ export default function Contact() {
                   {t('formHint')}
                 </p>
 
-                <form className="mt-6 space-y-5 text-left">
+                <form ref={formRef} onSubmit={onSubmit} className="mt-6 space-y-5 text-left">
+                  {/* honeypot hidden */}
+                  <input
+                    type="text"
+                    name="company"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    className="hidden"
+                    aria-hidden="true"
+                  />
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <label className="space-y-2 text-left">
                       <span className="text-sm font-medium text-brand-navy">
@@ -132,6 +225,7 @@ export default function Contact() {
                         name="name"
                         placeholder={t('namePlaceholder')}
                         className={inputBase}
+                        disabled={sendState === 'loading'}
                       />
                     </label>
 
@@ -144,6 +238,7 @@ export default function Contact() {
                         name="email"
                         placeholder={t('emailPlaceholder')}
                         className={inputBase}
+                        disabled={sendState === 'loading'}
                       />
                     </label>
                   </div>
@@ -158,6 +253,7 @@ export default function Contact() {
                         name="whatsapp"
                         placeholder={t('whatsappPlaceholder')}
                         className={inputBase}
+                        disabled={sendState === 'loading'}
                       />
                     </label>
 
@@ -174,6 +270,7 @@ export default function Contact() {
                             value="email"
                             defaultChecked
                             className="accent-brand-blue"
+                            disabled={sendState === 'loading'}
                           />
                           {t('preferredEmail')}
                         </label>
@@ -184,6 +281,7 @@ export default function Contact() {
                             name="preferred"
                             value="whatsapp"
                             className="accent-brand-blue"
+                            disabled={sendState === 'loading'}
                           />
                           {t('preferredWhatsapp')}
                         </label>
@@ -192,7 +290,7 @@ export default function Contact() {
                   </div>
 
                   <label className="space-y-2 text-left">
-                    <span className="text-sm text-left! font-medium text-brand-navy">
+                    <span className="text-sm font-medium text-brand-navy">
                       {t('message')} <span className="text-brand-blue">*</span>
                     </span>
                     <textarea
@@ -200,24 +298,45 @@ export default function Contact() {
                       rows={7}
                       placeholder={t('messagePlaceholder')}
                       className={cn(inputBase, 'resize-none')}
+                      disabled={sendState === 'loading'}
                     />
                   </label>
 
                   <div className="pt-1">
                     <div className="flex justify-center sm:justify-start">
                       <Button
-                        type="button"
+                        type="submit"
                         context="light"
                         variant="primary"
-                        className="cursor-pointer"
+                        className={cn('cursor-pointer', sendState === 'loading' ? 'opacity-90' : '')}
+                        disabled={sendState === 'loading'}
                       >
-                        {t('submit')}
+                        {sendState === 'loading'
+                          ? ((t as any).has?.('sending')
+                              ? t('sending')
+                              : locale === 'es'
+                                ? 'Enviando...'
+                                : 'Sending...')
+                          : t('submit')}
                       </Button>
                     </div>
 
-                    <p className="mt-4 text-xs text-ink-muted text-center sm:text-left">
-                      {t('privacyNote')}
-                    </p>
+                    {/* feedback */}
+                    {sendMsg ? (
+                      <p
+                        className={cn(
+                          'mt-4 text-xs',
+                          sendState === 'success' ? 'text-emerald-700' : 'text-rose-700',
+                          'text-center sm:text-left'
+                        )}
+                      >
+                        {sendMsg}
+                      </p>
+                    ) : (
+                      <p className="mt-4 text-xs text-ink-muted text-center sm:text-left">
+                        {t('privacyNote')}
+                      </p>
+                    )}
                   </div>
                 </form>
               </div>
@@ -264,7 +383,7 @@ export default function Contact() {
                         href={whatsappHref}
                         target="_blank"
                         rel="noreferrer"
-                        className="w-full cursor-pointer text-sm! 2xl:text-base!"
+                        className="w-full cursor-pointer"
                       >
                         <>
                           <WhatsAppIcon className="h-5 w-5" />
@@ -277,7 +396,7 @@ export default function Contact() {
                         context="light"
                         variant="secondary"
                         href={emailHref}
-                        className="w-full cursor-pointer text-sm! 2xl:text-base!"
+                        className="w-full cursor-pointer"
                       >
                         <>
                           <MailIcon className="h-5 w-5" />
@@ -286,8 +405,8 @@ export default function Contact() {
                       </Button>
                     </div>
 
-                    {/* ✅ Social: mismo ancho que los CTAs */}
-                    <div className="flex flex-wrap gap-3 items-center justify-center">
+                    {/* Social: mismo ancho que CTAs */}
+                    <div className="flex flex-col sm:flex-row gap-3 items-center justify-center md:justify-start">
                       <Button
                         asChild
                         context="light"
@@ -295,7 +414,7 @@ export default function Contact() {
                         href={linkedinHref}
                         target="_blank"
                         rel="noreferrer"
-                        className="w-full sm:w-[calc(50%-6px)] cursor-pointer text-sm! 2xl:text-base!"
+                        className="w-full sm:w-1/2 cursor-pointer justify-center"
                       >
                         <>
                           <LinkedInIcon className="h-5 w-5" />
@@ -310,7 +429,7 @@ export default function Contact() {
                         href={instagramHref}
                         target="_blank"
                         rel="noreferrer"
-                        className="w-full sm:w-[calc(50%-6px)] cursor-pointer text-sm! 2xl:text-base!"
+                        className="w-full sm:w-1/2 cursor-pointer justify-center"
                       >
                         <>
                           <InstagramIcon className="h-5 w-5" />
@@ -339,4 +458,5 @@ export default function Contact() {
     </section>
   );
 }
+
 
