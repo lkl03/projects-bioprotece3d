@@ -154,7 +154,7 @@ export default function Footer() {
             <p className="text-center text-xs text-white/80">
               ©{year} | {t('creditsPrefix')}{' '}
               <a
-                href="https://eterlab.vercel.app/"
+                href="https://eterlab.co/"
                 target="_blank"
                 rel="noreferrer"
                 className="italic text-white/90 hover:text-white transition-colors"
