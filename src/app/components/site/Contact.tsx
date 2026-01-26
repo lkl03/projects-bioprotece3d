@@ -358,7 +358,7 @@ export default function Contact() {
                         className="w-full sm:w-1/2 cursor-pointer justify-center"
                       >
                         <>
-                          <LinkedInIcon className="h-5 w-5 lg:hidden 3xl:block" />
+                          <LinkedInIcon className="h-5 w-5 lg:hidden 3xl:block!" />
                           <span className="text-center lg:text-sm 2xl:text-base">LinkedIn</span>
                         </>
                       </Button>
@@ -373,7 +373,7 @@ export default function Contact() {
                         className="w-full sm:w-1/2 cursor-pointer justify-center"
                       >
                         <>
-                          <InstagramIcon className="h-5 w-5 lg:hidden 3xl:block" />
+                          <InstagramIcon className="h-5 w-5 lg:hidden 3xl:block!" />
                           <span className="text-center lg:text-sm 2xl:text-base">Instagram</span>
                         </>
                       </Button>
