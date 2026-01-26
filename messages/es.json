@@ -137,6 +137,10 @@
     "submit": "Enviar consulta",
     "privacyNote": "Tus datos nunca van a ser usados para llamarte sin avisar.",
 
+    "sending": "Enviando...",
+    "success": "¡Listo! Recibimos tu consulta. Te respondemos a la brevedad.",
+    "error": "No se pudo enviar. Probá de nuevo en unos minutos.",
+
     "visitTitle": "Visitanos",
     "visitBody": "La fábrica está abierta para que visites el proceso productivo y podamos discutir tu proyecto de impresión.",
 

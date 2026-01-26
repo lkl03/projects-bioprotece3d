@@ -137,6 +137,10 @@
     "submit": "Send inquiry",
     "privacyNote": "Your details will never be used to contact you without your consent.",
 
+    "sending": "Sending...",
+    "success": "Done! We received your message. We'll get back to you shortly.",
+    "error": "Couldn’t send your message. Please try again in a few minutes.",
+
     "visitTitle": "Visit us",
     "visitBody": "Our plant is open so you can see the production process and we can discuss your printing project.",
 

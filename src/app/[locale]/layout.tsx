@@ -3,6 +3,7 @@ import { Inter, Montserrat } from 'next/font/google';
 import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import Script from 'next/script';
 import { routing } from '@/i18n/routing';
 import '@/app/globals.css';
 import Header from '../components/site/Header';
@@ -41,12 +42,25 @@ export default async function LocaleLayout(
   if (!hasLocale(routing.locales, locale)) notFound();
 
   setRequestLocale(locale);
-
   const messages = await getMessages();
 
   return (
     <html lang={locale} className="scroll-smooth">
       <body className={`${inter.variable} ${montserrat.variable} font-body antialiased`}>
+        {/* Google tag (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-17904799790"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-17904799790');
+          `}
+        </Script>
+
         <NextIntlClientProvider messages={messages}>
           <Header />
           {children}
@@ -56,5 +70,6 @@ export default async function LocaleLayout(
     </html>
   );
 }
+
 
 

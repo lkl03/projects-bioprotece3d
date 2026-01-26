@@ -38,14 +38,12 @@ function MailIcon({ className }: { className?: string }) {
   );
 }
 
-type SendState = 'idle' | 'loading' | 'success' | 'error';
-
 export default function Contact() {
   const t = useTranslations('Contact');
   const locale = useLocale() as Locale;
   const ids = getSectionIds(locale);
 
-  // ✅ fade-in on scroll (1 vez)
+  // fade-in on scroll (1 vez)
   const [entered, setEntered] = useState(false);
   const enterRef = useRef<HTMLDivElement | null>(null);
 
@@ -85,84 +83,50 @@ export default function Contact() {
     'focus:outline-none focus:ring-1 focus:ring-brand-sky/35 focus:border-brand-sky/35'
   );
 
-  const [sendState, setSendState] = useState<SendState>('idle');
-  const [sendMsg, setSendMsg] = useState<string>('');
-  const formRef = useRef<HTMLFormElement | null>(null);
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    whatsapp: '',
+    preferred: 'email' as 'email' | 'whatsapp',
+    message: '',
+    company: '' // honeypot
+  });
 
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState<string>('');
+
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (sendState === 'loading') return;
-
-    setSendState('loading');
-    setSendMsg('');
-
-    const fd = new FormData(e.currentTarget);
-
-    const payload = {
-      name: String(fd.get('name') ?? '').trim(),
-      email: String(fd.get('email') ?? '').trim(),
-      whatsapp: String(fd.get('whatsapp') ?? '').trim(),
-      preferred: (String(fd.get('preferred') ?? 'email') === 'whatsapp' ? 'whatsapp' : 'email') as
-        | 'email'
-        | 'whatsapp',
-      message: String(fd.get('message') ?? '').trim(),
-      // honeypot (input oculto)
-      company: String(fd.get('company') ?? '').trim()
-    };
-
-    // validación mínima
-    if (!payload.name || !payload.email || !payload.message) {
-      setSendState('error');
-      setSendMsg(
-        (t as any).has?.('sendMissing')
-          ? t('sendMissing')
-          : locale === 'es'
-            ? 'Completá nombre, correo y mensaje.'
-            : 'Please fill name, email and message.'
-      );
-      return;
-    }
+    setStatus('sending');
+    setErrorMsg('');
 
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(form)
       });
 
-      const json = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+      const json = await res.json().catch(() => null);
 
-      if (!res.ok || !json.ok) {
-        setSendState('error');
-        setSendMsg(
-          (t as any).has?.('sendError')
-            ? t('sendError')
-            : locale === 'es'
-              ? 'No pudimos enviar tu consulta. Probá de nuevo en unos minutos.'
-              : "We couldn't send your message. Please try again in a few minutes."
-        );
+      if (!res.ok || !json?.ok) {
+        setStatus('error');
+        setErrorMsg(json?.error ? String(json.error) : 'server_error');
         return;
       }
 
-      setSendState('success');
-      setSendMsg(
-        (t as any).has?.('sendSuccess')
-          ? t('sendSuccess')
-          : locale === 'es'
-            ? '¡Listo! Recibimos tu consulta y te vamos a responder a la brevedad.'
-            : "Done! We received your message and we'll get back to you shortly."
-      );
-
-      formRef.current?.reset();
-    } catch {
-      setSendState('error');
-      setSendMsg(
-        (t as any).has?.('sendError')
-          ? t('sendError')
-          : locale === 'es'
-            ? 'No pudimos enviar tu consulta. Probá de nuevo en unos minutos.'
-            : "We couldn't send your message. Please try again in a few minutes."
-      );
+      setStatus('success');
+      setForm({
+        name: '',
+        email: '',
+        whatsapp: '',
+        preferred: 'email',
+        message: '',
+        company: ''
+      });
+    } catch (err) {
+      setStatus('error');
+      setErrorMsg('network_error');
     }
   }
 
@@ -177,22 +141,14 @@ export default function Contact() {
         )}
       >
         <div className="mx-auto w-full max-w-screen-2xl 3xl:max-w-[1760px] px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
-          {/* Intro */}
           <div className="mx-auto max-w-3xl text-center">
-            <p className="text-xs uppercase tracking-[0.22em] text-brand-blue/80">
-              {t('kicker')}
-            </p>
-
+            <p className="text-xs uppercase tracking-[0.22em] text-brand-blue/80">{t('kicker')}</p>
             <h2 className="mt-4 font-display text-3xl sm:text-4xl font-semibold tracking-tight text-brand-navy">
               {t('title')}
             </h2>
-
-            <p className="mt-5 text-ink-muted leading-relaxed whitespace-pre-line">
-              {t('subtitle')}
-            </p>
+            <p className="mt-5 text-ink-muted leading-relaxed whitespace-pre-line">{t('subtitle')}</p>
           </div>
 
-          {/* Layout */}
           <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-start">
             {/* Form */}
             <div className="rounded-2xl border border-black/5 bg-white shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
@@ -200,19 +156,18 @@ export default function Contact() {
                 <h3 className="font-display text-2xl sm:text-3xl font-semibold text-brand-navy">
                   {t('formTitle')}
                 </h3>
-                <p className="mt-2 text-sm text-ink-muted">
-                  {t('formHint')}
-                </p>
+                <p className="mt-2 text-sm text-ink-muted">{t('formHint')}</p>
 
-                <form ref={formRef} onSubmit={onSubmit} className="mt-6 space-y-5 text-left">
-                  {/* honeypot hidden */}
+                <form onSubmit={onSubmit} className="mt-6 space-y-5 text-left">
+                  {/* honeypot invisible */}
                   <input
                     type="text"
                     name="company"
+                    value={form.company}
+                    onChange={(e) => setForm((p) => ({ ...p, company: e.target.value }))}
+                    className="hidden"
                     tabIndex={-1}
                     autoComplete="off"
-                    className="hidden"
-                    aria-hidden="true"
                   />
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -221,11 +176,13 @@ export default function Contact() {
                         {t('name')} <span className="text-brand-blue">*</span>
                       </span>
                       <input
+                        required
                         type="text"
                         name="name"
                         placeholder={t('namePlaceholder')}
                         className={inputBase}
-                        disabled={sendState === 'loading'}
+                        value={form.name}
+                        onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
                       />
                     </label>
 
@@ -234,43 +191,41 @@ export default function Contact() {
                         {t('email')} <span className="text-brand-blue">*</span>
                       </span>
                       <input
+                        required
                         type="email"
                         name="email"
                         placeholder={t('emailPlaceholder')}
                         className={inputBase}
-                        disabled={sendState === 'loading'}
+                        value={form.email}
+                        onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
                       />
                     </label>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
                     <label className="space-y-2 text-left">
-                      <span className="text-sm font-medium text-brand-navy">
-                        {t('whatsapp')}
-                      </span>
+                      <span className="text-sm font-medium text-brand-navy">{t('whatsapp')}</span>
                       <input
                         type="tel"
                         name="whatsapp"
                         placeholder={t('whatsappPlaceholder')}
                         className={inputBase}
-                        disabled={sendState === 'loading'}
+                        value={form.whatsapp}
+                        onChange={(e) => setForm((p) => ({ ...p, whatsapp: e.target.value }))}
                       />
                     </label>
 
                     <fieldset className="space-y-2 text-left">
-                      <legend className="text-sm font-medium text-brand-navy">
-                        {t('preferred')}
-                      </legend>
-
+                      <legend className="text-sm font-medium text-brand-navy">{t('preferred')}</legend>
                       <div className="flex flex-wrap gap-3">
                         <label className="inline-flex items-center gap-2 rounded-full border border-black/10 px-4 py-2 text-sm text-ink-muted bg-white cursor-pointer">
                           <input
                             type="radio"
                             name="preferred"
                             value="email"
-                            defaultChecked
+                            checked={form.preferred === 'email'}
+                            onChange={() => setForm((p) => ({ ...p, preferred: 'email' }))}
                             className="accent-brand-blue"
-                            disabled={sendState === 'loading'}
                           />
                           {t('preferredEmail')}
                         </label>
@@ -280,8 +235,9 @@ export default function Contact() {
                             type="radio"
                             name="preferred"
                             value="whatsapp"
+                            checked={form.preferred === 'whatsapp'}
+                            onChange={() => setForm((p) => ({ ...p, preferred: 'whatsapp' }))}
                             className="accent-brand-blue"
-                            disabled={sendState === 'loading'}
                           />
                           {t('preferredWhatsapp')}
                         </label>
@@ -294,11 +250,13 @@ export default function Contact() {
                       {t('message')} <span className="text-brand-blue">*</span>
                     </span>
                     <textarea
+                      required
                       name="message"
                       rows={7}
                       placeholder={t('messagePlaceholder')}
                       className={cn(inputBase, 'resize-none')}
-                      disabled={sendState === 'loading'}
+                      value={form.message}
+                      onChange={(e) => setForm((p) => ({ ...p, message: e.target.value }))}
                     />
                   </label>
 
@@ -308,33 +266,25 @@ export default function Contact() {
                         type="submit"
                         context="light"
                         variant="primary"
-                        className={cn('cursor-pointer', sendState === 'loading' ? 'opacity-90' : '')}
-                        disabled={sendState === 'loading'}
+                        className="cursor-pointer"
+                        disabled={status === 'sending'}
                       >
-                        {sendState === 'loading'
-                          ? ((t as any).has?.('sending')
-                              ? t('sending')
-                              : locale === 'es'
-                                ? 'Enviando...'
-                                : 'Sending...')
-                          : t('submit')}
+                        {status === 'sending' ? t('sending') : t('submit')}
                       </Button>
                     </div>
 
-                    {/* feedback */}
-                    {sendMsg ? (
-                      <p
-                        className={cn(
-                          'mt-4 text-xs',
-                          sendState === 'success' ? 'text-emerald-700' : 'text-rose-700',
-                          'text-center sm:text-left'
-                        )}
-                      >
-                        {sendMsg}
+                    <p className="mt-4 text-xs text-ink-muted text-center sm:text-left">
+                      {t('privacyNote')}
+                    </p>
+
+                    {status === 'success' && (
+                      <p className="mt-3 text-sm text-green-700 text-center sm:text-left">
+                        {t('success')}
                       </p>
-                    ) : (
-                      <p className="mt-4 text-xs text-ink-muted text-center sm:text-left">
-                        {t('privacyNote')}
+                    )}
+                    {status === 'error' && (
+                      <p className="mt-3 text-sm text-red-700 text-center sm:text-left">
+                        {t('error')} ({errorMsg})
                       </p>
                     )}
                   </div>
@@ -345,7 +295,6 @@ export default function Contact() {
             {/* Info + Map */}
             <div className="rounded-2xl border border-black/5 bg-white shadow-[0_10px_30px_rgba(0,0,0,0.06)] overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-2">
-                {/* Left info */}
                 <div className="p-6 sm:p-8 text-center md:text-left">
                   <h3 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight text-brand-navy">
                     {t('visitTitle')}
@@ -357,24 +306,16 @@ export default function Contact() {
 
                   <div className="mt-7 space-y-5">
                     <div>
-                      <p className="text-sm font-semibold text-brand-navy">
-                        {t('addressLabel')}
-                      </p>
-                      <p className="mt-1 text-sm text-ink-muted">
-                        {t('addressValue')}
-                      </p>
+                      <p className="text-sm font-semibold text-brand-navy">{t('addressLabel')}</p>
+                      <p className="mt-1 text-sm text-ink-muted">{t('addressValue')}</p>
                     </div>
 
                     <div>
-                      <p className="text-sm font-semibold text-brand-navy">
-                        {t('hoursLabel')}
-                      </p>
-                      <p className="mt-1 text-sm text-ink-muted">
-                        {t('hoursValue')}
-                      </p>
+                      <p className="text-sm font-semibold text-brand-navy">{t('hoursLabel')}</p>
+                      <p className="mt-1 text-sm text-ink-muted">{t('hoursValue')}</p>
                     </div>
 
-                    {/* CTAs full width */}
+{/* CTAs full width */}
                     <div className="flex flex-col gap-3 pt-1">
                       <Button
                         asChild
@@ -386,8 +327,8 @@ export default function Contact() {
                         className="w-full cursor-pointer"
                       >
                         <>
-                          <WhatsAppIcon className="h-5 w-5" />
-                          <span className="text-center">{t('ctaWhatsapp')}</span>
+                          <WhatsAppIcon className="h-5 w-5 lg:hidden 2xl:block" />
+                          <span className="text-center lg:text-sm 2xl:text-base">{t('ctaWhatsapp')}</span>
                         </>
                       </Button>
 
@@ -399,8 +340,8 @@ export default function Contact() {
                         className="w-full cursor-pointer"
                       >
                         <>
-                          <MailIcon className="h-5 w-5" />
-                          <span className="text-center">{t('ctaEmail')}</span>
+                          <MailIcon className="h-5 w-5 lg:hidden 2xl:block" />
+                          <span className="text-center lg:text-sm 2xl:text-base">{t('ctaEmail')}</span>
                         </>
                       </Button>
                     </div>
@@ -417,8 +358,8 @@ export default function Contact() {
                         className="w-full sm:w-1/2 cursor-pointer justify-center"
                       >
                         <>
-                          <LinkedInIcon className="h-5 w-5" />
-                          <span className="text-center">LinkedIn</span>
+                          <LinkedInIcon className="h-5 w-5 lg:hidden 3xl:block" />
+                          <span className="text-center lg:text-sm 2xl:text-base">LinkedIn</span>
                         </>
                       </Button>
 
@@ -432,15 +373,14 @@ export default function Contact() {
                         className="w-full sm:w-1/2 cursor-pointer justify-center"
                       >
                         <>
-                          <InstagramIcon className="h-5 w-5" />
-                          <span className="text-center">Instagram</span>
+                          <InstagramIcon className="h-5 w-5 lg:hidden 3xl:block" />
+                          <span className="text-center lg:text-sm 2xl:text-base">Instagram</span>
                         </>
                       </Button>
                     </div>
                   </div>
                 </div>
 
-                {/* Map */}
                 <div className="relative min-h-[320px] md:min-h-[520px] bg-black/5">
                   <iframe
                     title="Google Maps - Bioprotece SA"
@@ -458,5 +398,6 @@ export default function Contact() {
     </section>
   );
 }
+
 
 
