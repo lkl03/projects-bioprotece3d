@@ -4,6 +4,7 @@ import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import Script from 'next/script';
+import { Analytics } from '@vercel/analytics/next';
 import { routing } from '@/i18n/routing';
 import '@/app/globals.css';
 import Header from '../components/site/Header';
@@ -66,6 +67,7 @@ export default async function LocaleLayout(
           {children}
           <WhatsAppFloating />
         </NextIntlClientProvider>
+        <Analytics />
       </body>
     </html>
   );
