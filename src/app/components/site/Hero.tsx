@@ -5,6 +5,8 @@ import { useLocale, useTranslations } from 'next-intl';
 import { Button } from '../ui/button';
 import { getSectionIds, hash, type Locale } from '@/app/lib/sections';
 
+type Variant = 'mobile' | 'desktop';
+
 export default function Hero() {
   const t = useTranslations('Hero');
   const locale = useLocale() as Locale;
@@ -24,36 +26,84 @@ export default function Hero() {
     setKickerIndex(0);
   }, [locale]);
 
-  // Rotación cada 6s
+  // ✅ Rotación cada 6s (como pediste)
   useEffect(() => {
     if (kickers.length <= 1) return;
     const id = window.setInterval(() => {
       setKickerIndex((i) => (i + 1) % kickers.length);
-    }, 4000);
+    }, 6000);
 
     return () => window.clearInterval(id);
   }, [kickers.length]);
 
+  // ✅ Detectar mobile/desktop (sin bajar assets equivocados)
+  const [variant, setVariant] = useState<Variant | null>(null);
+  const [saveData, setSaveData] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)');
+    const coarse = window.matchMedia('(pointer: coarse)');
+
+    const apply = () => {
+      const isMobile = mq.matches || coarse.matches;
+      setVariant(isMobile ? 'mobile' : 'desktop');
+
+      // Data Saver (si está disponible)
+      const anyNav = navigator as any;
+      const conn = anyNav?.connection;
+      const sd = Boolean(conn?.saveData);
+      setSaveData(sd);
+    };
+
+    apply();
+    mq.addEventListener?.('change', apply);
+    coarse.addEventListener?.('change', apply);
+
+    return () => {
+      mq.removeEventListener?.('change', apply);
+      coarse.removeEventListener?.('change', apply);
+    };
+  }, []);
+
+  const poster = '/hero-poster.jpg';
+
+  // ✅ Si todavía no sabemos variant, o si el usuario tiene data-saver, mostramos poster (cero video)
+  const shouldShowVideo = variant !== null && !saveData;
+
+  const videoSrc = variant === 'mobile' ? '/hero-mobile.mp4' : '/hero.mp4';
+  const isMobile = variant === 'mobile';
+
   return (
     <section id={ids.home} className="relative min-h-screen w-full overflow-hidden">
-      <video
-        className="absolute inset-0 h-full w-full object-cover"
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        poster="/hero-poster.jpg"
-      >
-        <source src="/hero.webm" type="video/webm" />
-        <source src="/hero.mp4" type="video/mp4" />
-      </video>
+      {/* Background */}
+      {shouldShowVideo ? (
+        <video
+          className="absolute inset-0 h-full w-full object-cover"
+          autoPlay
+          muted
+          playsInline
+          // ✅ mobile: sin loop (reproduce una vez y listo)
+          loop={!isMobile}
+          // ✅ no cambia mucho con autoplay, pero ok
+          preload="metadata"
+          poster={poster}
+        >
+          {/* ✅ 1 solo source para evitar que el browser elija otro formato pesado */}
+          <source src={videoSrc} type="video/mp4" />
+        </video>
+      ) : (
+        // Fallback poster mientras detectamos variant o si hay data saver
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${poster})` }}
+          aria-hidden="true"
+        />
+      )}
 
       <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/45 to-black/70" />
 
       <div className="relative z-10 flex min-h-screen items-center justify-center px-4 sm:px-6">
         <div className="mx-auto max-w-4xl text-center text-white">
-          {/* ✅ Kicker con fade suave en cada cambio */}
           <p
             key={kickerIndex}
             className="text-xs sm:text-sm uppercase tracking-[0.22em] text-white/80 min-h-[1.25rem] motion-safe:animate-fade-in motion-safe:animate-duration-500"
@@ -82,6 +132,8 @@ export default function Hero() {
     </section>
   );
 }
+
+
 
 
 
