@@ -363,7 +363,7 @@ export default function Services() {
                       )}
                     >
                       <div className="relative h-44 w-full bg-black/5">
-                        <Image src={s.imageSrc} alt={s.title} fill className="object-cover" />
+                        <Image src={s.imageSrc} alt={s.title} fill sizes="340px" className="object-cover" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-transparent" />
                       </div>
 
@@ -392,7 +392,7 @@ export default function Services() {
                     )}
                   >
                     <div className="relative h-60 w-full bg-black/5">
-                      <Image src={s.imageSrc} alt={s.title} fill className="object-cover object-top" />
+                      <Image src={s.imageSrc} alt={s.title} fill sizes="(min-width: 1536px) 720px, 50vw" className="object-cover object-top" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-transparent" />
                     </div>
 

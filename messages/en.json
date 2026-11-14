@@ -1,7 +1,20 @@
 {
   "Metadata": {
-    "title": "Bioprotece3D | Metal 3D Printing",
-    "description": "At Bioprotece 3D, we provide metal 3D printing services. We quote your project free of charge and manufacture it in record time using DMLS technology. We can produce your product, post-process it, and even package it with your logo."
+    "title": "Metal 3D Printing (DMLS) in Buenos Aires | Bioprotece3D",
+    "description": "Metal 3D printing with DMLS technology in Villa Ballester, Buenos Aires, Argentina. Spare parts, prototypes and short runs with post-processing. Free quote.",
+    "ogAlt": "Bioprotece3D: metal 3D printing",
+    "orgDescription": "Bioprotece 3D is the metal 3D printing division of Bioprotece S.A.: additive manufacturing (DMLS) and precision machining from its plant in Villa Ballester, Buenos Aires, Argentina.",
+    "workAlts": [
+      "Skull model with a 3D-printed metal mesh",
+      "3D-printed metal plates on the build plate",
+      "Metal parts with lattice geometries on the build plate",
+      "Batch of 3D-printed metal parts on the build plate"
+    ],
+    "aboutAlts": [
+      "Removing metal powder from the chamber of a DMLS 3D printer",
+      "3D-printed metal part with a turbine and lattice structure",
+      "Freshly printed parts inside the 3D printer chamber"
+    ]
   },
   "Nav": {
     "home": "Home",

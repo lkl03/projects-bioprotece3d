@@ -36,13 +36,15 @@ export default function About() {
     return () => obs.disconnect();
   }, []);
 
+  const tMeta = useTranslations('Metadata');
+  const slideAlts = tMeta.raw('aboutAlts') as string[];
   const slides: Slide[] = useMemo(
     () => [
-      { src: '/about/01.webp', alt: 'Bioprotece3D - Planta / Proceso' },
-      { src: '/about/02.webp', alt: 'Bioprotece3D - Piezas metálicas' },
-      { src: '/about/03.webp', alt: 'Bioprotece3D - Tecnología / Equipo' }
+      { src: '/about/01.webp', alt: slideAlts?.[0] ?? 'Bioprotece3D - Planta / Proceso' },
+      { src: '/about/02.webp', alt: slideAlts?.[1] ?? 'Bioprotece3D - Piezas metálicas' },
+      { src: '/about/03.webp', alt: slideAlts?.[2] ?? 'Bioprotece3D - Tecnología / Equipo' }
     ],
-    []
+    [slideAlts]
   );
 
   const [index, setIndex] = useState(0);
@@ -194,6 +196,7 @@ export default function About() {
                     src={s.src}
                     alt={s.alt}
                     fill
+                    sizes="(min-width: 1024px) 40vw, 100vw"
                     priority={i === 0}
                     className={cn(
                       'object-cover',

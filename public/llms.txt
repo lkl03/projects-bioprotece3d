@@ -1,0 +1,38 @@
+# Bioprotece3D
+
+> Bioprotece 3D es la división de impresión 3D en metales de Bioprotece S.A. Ofrece fabricación aditiva metálica con tecnología DMLS y mecanizado de precisión en la misma planta, en Villa Ballester, Buenos Aires, Argentina, para la industria argentina y latinoamericana. Cotiza proyectos sin cargo.
+
+## Páginas
+
+- [Inicio (español)](https://www.bioprotece3d.com/es): quiénes somos, servicios, rubros, trabajos y contacto.
+- [Home (English)](https://www.bioprotece3d.com/en): the same content in English.
+- [Brochure institucional (PDF)](https://www.bioprotece3d.com/bioprotece3d-brochure.pdf)
+
+## Servicios
+
+- Ingeniería: desarrollo del diseño, control dimensional del STL y probetas antes de la impresión definitiva.
+- Impresión 3D en metal: 3 impresoras DMLS, con certificados de materia prima a disposición del cliente. Piezas en titanio o acero.
+- Post proceso en la misma planta: pulido, grabado láser del logo, anodizado para dar color y envasado con la marca del cliente.
+
+## Necesidades que resuelve
+
+- Repuestos urgentes para líneas de producción, cuando el original no está disponible, está discontinuado o su entrega demora semanas.
+- Piezas complejas que no pueden fabricarse con CNC: geometrías internas, canales ocultos, curvaturas orgánicas y estructuras livianas.
+- Prototipos funcionales y series cortas sin necesidad de moldes, matrices ni herramentales.
+
+## Rubros
+
+- Oil & gas: componentes resistentes a la corrosión y repuestos críticos.
+- Automotriz y maquinaria: utillajes, piezas de validación y componentes funcionales.
+- Química, alimenticia y farmacéutica: piezas sanitarias y repuestos críticos.
+- Aeroespacial, drones y tecnología: estructuras livianas, soportes optimizados y carcasas metálicas.
+
+## Contacto
+
+- Dirección: Vicente López 4334, Villa Ballester, Buenos Aires, Argentina. La planta se puede visitar.
+- Horario: lunes a viernes, de 7:00 a 16:00.
+- Email: impresion3d@bioprotece.com
+- WhatsApp: +54 9 11 3364 7947
+- Instagram: https://www.instagram.com/bioprotece3d/
+- LinkedIn: https://www.linkedin.com/showcase/bioprotece-3d/
+- Empresa madre: Bioprotece S.A., https://www.bioprotece.com.ar
