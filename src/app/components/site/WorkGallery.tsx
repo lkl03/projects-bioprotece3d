@@ -156,6 +156,9 @@ export default function WorkGallery() {
   // Lightbox
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const altBase = locale === 'es' ? 'Trabajo' : 'Work';
+  const tMeta = useTranslations('Metadata');
+  const alts = tMeta.raw('workAlts') as string[];
+  const altFor = (i: number) => alts?.[i] ?? `${altBase} ${i + 1}`;
 
   function close() {
     setOpenIndex(null);
@@ -224,7 +227,7 @@ export default function WorkGallery() {
                 {items.map((it, idx) => (
                   <GalleryTile
                     key={it.src}
-                    item={{ ...it, alt: `${altBase} ${idx + 1}` }}
+                    item={{ ...it, alt: altFor(idx) }}
                     index={idx}
                     onOpen={setOpenIndex}
                     supportsHover={supportsHover}
@@ -249,7 +252,7 @@ export default function WorkGallery() {
               <div className="relative w-full h-full max-w-6xl max-h-[82vh] pointer-events-auto">
                 <Image
                   src={items[openIndex].src}
-                  alt={`${altBase} ${openIndex + 1}`}
+                  alt={altFor(openIndex)}
                   fill
                   sizes="100vw"
                   className="object-contain"

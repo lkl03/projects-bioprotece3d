@@ -1,7 +1,20 @@
 {
   "Metadata": {
-    "title": "Bioprotece3D | Impresión 3D en Metales",
-    "description": "En Bioprotece 3D, ofrecemos servicios de impresión 3D en metales, cotizamos tu proyecto sin cargo y lo fabricamos en tiempo récord con tecnología DMLS. Ofrecemos fabricar tu producto, post procesarlo y hasta envasarlo con tu logo."
+    "title": "Impresión 3D en metal (DMLS) en Buenos Aires | Bioprotece3D",
+    "description": "Impresión 3D en metal con tecnología DMLS en Villa Ballester, Buenos Aires. Repuestos, prototipos y series cortas con post proceso. Cotizá sin cargo.",
+    "ogAlt": "Bioprotece3D: impresión 3D en metales",
+    "orgDescription": "Bioprotece 3D es la división de impresión 3D en metales de Bioprotece S.A.: fabricación aditiva (DMLS) y mecanizado de precisión desde su planta en Villa Ballester, Buenos Aires.",
+    "workAlts": [
+      "Modelo de cráneo con una malla metálica impresa en 3D",
+      "Placas metálicas impresas en 3D sobre la plataforma de impresión",
+      "Piezas metálicas con geometrías reticuladas sobre la plataforma de impresión",
+      "Serie de piezas metálicas impresas en 3D sobre la plataforma de impresión"
+    ],
+    "aboutAlts": [
+      "Retiro de polvo metálico en la cámara de una impresora 3D DMLS",
+      "Pieza metálica impresa en 3D con turbina y estructura reticulada",
+      "Piezas recién impresas dentro de la cámara de la impresora 3D"
+    ]
   },
   "Nav": {
     "home": "Inicio",
